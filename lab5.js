@@ -19,27 +19,71 @@ const assignment = {
     app.get("/a5/todos/:id/completed/:completed", (req, res) => {
       const { id, completed } = req.params;
       const todo = todos.find((t) => t.id === parseInt(id));
+      if (!todo) {
+        res.status(404).json({
+          message: `Todo with ID ${id} not found`,
+        });
+        return;
+      }
       todo.completed = completed;
       res.json(todos);
     });
+  
     app.get("/a5/todos/:id/description/:description", (req, res) => {
       const { id, description } = req.params;
       const todo = todos.find((t) => t.id === parseInt(id));
+      if (!todo) {
+        res.status(404).json({
+          message: `Todo with ID ${id} not found`,
+        });
+        return;
+      }
       todo.description = description;
       res.json(todos);
     });
+  
     app.get("/a5/todos/:id/title/:title", (req, res) => {
       const { id, title } = req.params;
       const todo = todos.find((t) => t.id === parseInt(id));
+      if (!todo) {
+        res.status(404).json({
+          message: `Todo with ID ${id} not found`,
+        });
+        return;
+      }
       todo.title = title;
       res.json(todos);
     });
+  
     app.delete("/a5/todos/:id", (req, res) => {
       const { id } = req.params;
       const todo = todos.find((t) => t.id === parseInt(id));
+      if (!todo) {
+        res.status(404).json({
+          message: `Unable to delete Todo with ID ${id}`,
+        });
+        return;
+      }
       todos.splice(todos.indexOf(todo), 1);
       res.sendStatus(200);
     });
+  
+    app.put("/a5/todos/:id", (req, res) => {
+      const { id } = req.params;
+      const todo = todos.find((t) => t.id === parseInt(id));
+      if (!todo) {
+        res.status(404).json({
+          message: `Unable to update Todo with ID ${id}`,
+        });
+        return;
+      }
+      todo.title = req.body.title;
+      todo.description = req.body.description;
+      todo.due = req.body.due;
+      todo.completed = req.body.completed;
+      res.sendStatus(200);
+    });
+  
     app.post("/a5/todos", (req, res) => {
       const newTodo = {
         ...req.body,
@@ -48,19 +92,28 @@ const assignment = {
       todos.push(newTodo);
       res.json(newTodo);
     });
+  
     app.get("/a5/todos", (req, res) => {
       const { completed } = req.query;
       if (completed !== undefined) {
         const completedTodos = todos.filter(
-          (t) => t.completed === completed);
+          (t) => t.completed === completed
+        );
         res.json(completedTodos);
         return;
       }
       res.json(todos);
     });
+  
     app.get("/a5/todos/:id", (req, res) => {
       const { id } = req.params;
       const todo = todos.find((t) => t.id === parseInt(id));
+      if (!todo) {
+        res.status(404).json({
+          message: `Todo with ID ${id} not found`,
+        });
+        return;
+      }
       res.json(todo);
     });
     app.get("/a5/assignment/title/:newTitle", (req, res) => {
